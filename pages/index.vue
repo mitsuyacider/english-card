@@ -38,6 +38,7 @@ export default {
     const protocol = process.env.HOST ? 'https://' : 'http://'
     const baseURL = `${protocol}${process.env.HOST || 'localhost'}:${process.env.PORT || 3000}`
     const address = baseURL + '/api/word'
+    console.log('address: ', address);
     axios.get(address)
     .then(response => {
       this.words = response.data
