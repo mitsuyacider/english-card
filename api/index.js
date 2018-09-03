@@ -10,7 +10,7 @@ const app = express()
 const uri = 'mongodb://heroku_l087wd94:6ufch8odl4g1c7hi7fom13pdkq@ds141952.mlab.com:41952/heroku_l087wd94'
 // Require API routes
 const users = require('./routes/users')
-const book = require('./routes/book');
+const word = require('./routes/word');
 
 const port = process.env.PORT || 3000
 
@@ -21,7 +21,7 @@ mongoose.connect(uri, { useMongoClient: true, promiseLibrary: require('bluebird'
 
 // Import API Routes
 app.use(users)
-app.use('/book', book);
+app.use('/word', word);
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
