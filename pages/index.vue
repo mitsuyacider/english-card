@@ -21,6 +21,7 @@ import AppLogo from '~/components/AppLogo.vue'
 import data from 'assets/data/word.json'
 import NativeCommunicator from '~/plugins/NativeCommunicator.js'
 import { mapGetters } from 'vuex'
+import axios from 'axios'
 
 export default {
   components: {
@@ -29,9 +30,18 @@ export default {
   data () {
     return {
       index: 0,
-      wordList: data['WordList'],
+      words: [],
       recognitionWord: this.$store.state.recognitionWord
     }
+  },
+  created () {
+    axios.get(`http://localhost:3000/api/word`)
+    .then(response => {
+      this.words = response.data
+    })
+    .catch(e => {
+      this.errors.push(e)
+    })
   },
   watch: {
     getRecognitionWord: function (newVal, oldVal) {
@@ -47,28 +57,36 @@ export default {
   },
   methods: {
     getUpperSentence: function () {
-      return this.wordList[this.index]['WordJP']
+      if (this.words.length > 0) {
+        return this.words[this.index]['WordJP']
+      } else {
+        return 'loading...'
+      }
     },
     getBottomSentence: function () {
-      // NOTE: recognition word をチェックして、単語と一致しているかどうかを調べる。
-      const word = this.wordList[this.index]['WordEN']
-      const hasWord = this.recognitionWord.toLowerCase().includes(word)
+      if (this.words.length > 0) {
+        // NOTE: recognition word をチェックして、単語と一致しているかどうかを調べる。
+        const word = this.words[this.index]['WordEN']
+        const hasWord = this.recognitionWord.toLowerCase().includes(word)
 
-      if (hasWord) {
-        this.updateWord()
-        return '正解！！'
+        if (hasWord) {
+          this.updateWord()
+          return '正解！！'
+        } else {
+          return this.recognitionWord
+        }
       } else {
-        return this.recognitionWord
+        return 'loading...'
       }
     },
     updateWord () {
       this.index++
-      if (this.index > this.wordList.length - 1) {
+      if (this.index > this.words.length - 1) {
         this.index = 0
       }
     },
     shuffle () {
-      let currentIndex = this.wordList.length
+      let currentIndex = this.words.length
       let temporaryValue
       let randomIndex
 
@@ -79,11 +97,9 @@ export default {
         currentIndex -= 1
 
         // And swap it with the current element.
-        temporaryValue = this.wordList[currentIndex]
-        this.$set(this.wordList, currentIndex, this.wordList[randomIndex])
-        this.$set(this.wordList, randomIndex, temporaryValue)
-        // this.wordList[currentIndex] = this.wordList[randomIndex]
-        // this.wordList[randomIndex] = temporaryValue
+        temporaryValue = this.words[currentIndex]
+        this.$set(this.words, currentIndex, this.words[randomIndex])
+        this.$set(this.words, randomIndex, temporaryValue)
       }
     }
   },
