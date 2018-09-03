@@ -4,6 +4,12 @@
   "description": "Nuxt.js project",
   "author": "Mitsuya.Watanabe <watanabe@gocco.co.jp>",
   "private": true,
+  "config": {
+    "nuxt": {
+      "host": "localhost",
+      "port": "3000"
+    }
+  },
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",
