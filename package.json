@@ -14,8 +14,11 @@
   },
   "dependencies": {
     "axios": "^0.16.2",
+    "body-parser": "^1.18.3",
     "cross-env": "^5.0.1",
     "express": "^4.15.3",
+    "mongoose": "^5.2.12",
+    "morgan": "^1.9.0",
     "nuxt": "latest",
     "source-map-support": "^0.4.15"
   },
