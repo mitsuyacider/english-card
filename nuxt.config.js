@@ -1,4 +1,8 @@
 module.exports = {
+  plugins: [{src: '~/plugins/NativeCommunicator.js', ssr: false}],
+  modules: [
+    ['bootstrap-vue/nuxt', { css: false }]
+  ],
   /*
   ** Headers of the page
   */
