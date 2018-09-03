@@ -35,7 +35,10 @@ export default {
     }
   },
   created () {
-    axios.get(`http://localhost:3000/api/word`)
+    const protocol = process.env.HOST ? 'https://' : 'http://'
+    const baseURL = `${protocol}${process.env.HOST || 'localhost'}:${process.env.PORT || 3000}`
+    const address = baseURL + '/api/word'
+    axios.get(address)
     .then(response => {
       this.words = response.data
     })
