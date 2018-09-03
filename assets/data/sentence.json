@@ -1,0 +1,24 @@
+{
+  "SentenceList" : [
+      {
+        "SentenceJP" : "この池は冬には凍る。",
+        "SentenceEN" : "This pond freezes in the water."
+      },
+      {
+        "SentenceJP" : "その2人の子は似た顔をしている。",
+        "SentenceEN" : "The two children look alike."
+      },
+      {
+        "SentenceJP" : "水中に住んでいる虫は多い。",
+        "SentenceEN" : "Many insects live in water."
+      },
+      {
+        "SentenceJP" : "上手な英語を書くことはそう容易ではない。",
+        "SentenceEN" : "Writing good English is not so easy."
+      },
+      {
+        "SentenceJP" : "外に誰かいますか？",
+        "SentenceEN" : "Is there anyone outside?"
+      }
+    ]
+}

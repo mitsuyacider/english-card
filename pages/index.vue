@@ -1,48 +1,121 @@
 <template>
   <section class="container">
-    <img src="~assets/img/logo.png" alt="Nuxt.js Logo" class="logo" />
-    <h1 class="title">
-      USERS
-    </h1>
-    <ul class="users">
-      <li v-for="(user, index) in users" :key="index" class="user">
-        <nuxt-link :to="{ name: 'id', params: { id: index }}">
-          {{ user.name }}
-        </nuxt-link>
-      </li>
-    </ul>
+    <div class="card" style="width: 18rem;">
+      <!-- <img class="card-img-top" src="..." alt="Card image cap"> -->
+      <div class="card-header">
+        <div class="upper">
+          <span>{{ getUpperSentence() }}</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="bottom">
+          <span>{{ getBottomSentence() }}</span>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
 <script>
-import axios from '~/plugins/axios'
+import AppLogo from '~/components/AppLogo.vue'
+import data from 'assets/data/word.json'
+import NativeCommunicator from '~/plugins/NativeCommunicator.js'
+import { mapGetters } from 'vuex'
 
 export default {
-  async asyncData () {
-    let { data } = await axios.get('/api/users')
-    return { users: data }
+  components: {
+    AppLogo
   },
-  head () {
+  data () {
     return {
-      title: 'Users'
+      index: 0,
+      wordList: data['WordList'],
+      recognitionWord: this.$store.state.recognitionWord
     }
+  },
+  watch: {
+    getRecognitionWord: function (newVal, oldVal) {
+      this.recognitionWord = newVal
+    }
+  },
+  computed: {
+    // ゲッターを、スプレッド演算子（object spread operator）を使って computed に組み込む
+    ...mapGetters([
+      'getRecognitionWord'
+      // ...
+    ])
+  },
+  methods: {
+    getUpperSentence: function () {
+      return this.wordList[this.index]['WordJP']
+    },
+    getBottomSentence: function () {
+      // NOTE: recognition word をチェックして、単語と一致しているかどうかを調べる。
+      const word = this.wordList[this.index]['WordEN']
+      const hasWord = this.recognitionWord.toLowerCase().includes(word)
+
+      if (hasWord) {
+        this.updateWord()
+        return '正解！！'
+      } else {
+        return this.recognitionWord
+      }
+    },
+    updateWord () {
+      this.index++
+      if (this.index > this.wordList.length - 1) {
+        this.index = 0
+      }
+    },
+    shuffle () {
+      let currentIndex = this.wordList.length
+      let temporaryValue
+      let randomIndex
+
+      // While there remain elements to shuffle...
+      while (currentIndex !== 0) {
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex)
+        currentIndex -= 1
+
+        // And swap it with the current element.
+        temporaryValue = this.wordList[currentIndex]
+        this.$set(this.wordList, currentIndex, this.wordList[randomIndex])
+        this.$set(this.wordList, randomIndex, temporaryValue)
+        // this.wordList[currentIndex] = this.wordList[randomIndex]
+        // this.wordList[randomIndex] = temporaryValue
+      }
+    }
+  },
+  mounted () {
+    // NOTE: データをシャッフルする
+    this.shuffle()
+
+    // FIXME: これが最適な方法ではないと思うが、pluginsにjsを入れると
+    //        vueアプリケーションが作られる前に読み込まれるため、storeの
+    //        情報を初期状態で保つことができない。そのため、storeの情報をセットする必要がある。
+    NativeCommunicator.setStore(this.$store)
+    NativeCommunicator.helloNative('hello')
+    NativeCommunicator.startRecognition()
   }
 }
 </script>
 
-<style scoped>
-.title
-{
-  margin: 30px 0;
+<style lang="scss">
+.card-header, .card-body {
+  height: 30vh;
+
+  // 上下中心に設定
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.users
-{
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.user
-{
-  margin: 10px 0;
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 </style>
