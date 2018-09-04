@@ -35,7 +35,6 @@ export default {
     }
   },
   created () {
-    console.log('env:', process.env.DEV_HOST);
     let address
 
     // NOTE: 環境変数が定義されているかを確認
@@ -45,10 +44,6 @@ export default {
     } else {
       address = 'https://english-card.herokuapp.com/api/word'
     }
-    // const protocol = process.env.HOST ? 'https://' : 'http://'
-    // const baseURL = `${protocol}${process.env.HOST || 'localhost'}:${process.env.PORT || 3000}`
-    // const address = baseURL + '/api/word'
-    console.log('address: ', address);
     axios.get(address)
     .then(response => {
       this.words = response.data
