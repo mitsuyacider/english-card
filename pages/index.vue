@@ -36,14 +36,14 @@ export default {
   },
   created () {
     console.log('env:', process.env.HOST);
-    let address = 'https://english-card.herokuapp.com/api/word'
-    // if (process.env.HOST === undefined) {
-    //   'https://localhost:3000/api/word'
-    // } else {
-    //   address = 'https://english-card.herokuapp.com/api/word'
-    // }
-    // const protocol = process.env.HOST ? 'https://' : 'http://'
-    // const baseURL = `${protocol}${process.env.HOST || 'localhost'}:${process.env.PORT || 3000}`
+    let address
+    if (process.env.HOST === undefined) {
+      address = 'http://localhost:3000/api/word'
+    } else {
+      address = 'https://english-card.herokuapp.com/api/word'
+    }
+    const protocol = process.env.HOST ? 'https://' : 'http://'
+    const baseURL = `${protocol}${process.env.HOST || 'localhost'}:${process.env.PORT || 3000}`
     // const address = baseURL + '/api/word'
     console.log('address: ', address);
     axios.get(address)
