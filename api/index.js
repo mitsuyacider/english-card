@@ -8,6 +8,7 @@ var mongoose = require('mongoose')
 // Create express instnace
 const app = express()
 const uri = 'mongodb://heroku_l087wd94:6ufch8odl4g1c7hi7fom13pdkq@ds141952.mlab.com:41952/heroku_l087wd94'
+
 // Require API routes
 const users = require('./routes/users')
 const word = require('./routes/word');

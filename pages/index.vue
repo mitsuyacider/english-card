@@ -35,7 +35,7 @@ export default {
     }
   },
   created () {
-    console.log('env:', process.env.HOST);
+    console.log('env:', process.env.baseUrl);
     let address = 'https://english-card.herokuapp.com/api/word'
 
     // if (process.env.HOST === undefined) {
