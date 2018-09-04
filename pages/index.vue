@@ -36,7 +36,6 @@ export default {
   },
   created () {
     let address
-
     // NOTE: 環境変数が定義されているかを確認
     //       定義されていれば、開発環境とみなす（開発環境の設定しか行っていない）
     if (process.env.DEV_HOST !== undefined) {
