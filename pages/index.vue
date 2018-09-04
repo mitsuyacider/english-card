@@ -35,14 +35,16 @@ export default {
     }
   },
   created () {
-    console.log('env:', process.env.baseUrl);
-    let address = 'https://english-card.herokuapp.com/api/word'
+    console.log('env:', process.env.DEV_HOST);
+    let address
 
-    // if (process.env.HOST === undefined) {
-    //   address = 'http://localhost:3000/api/word'
-    // } else {
-    //   address = 'https://english-card.herokuapp.com/api/word'
-    // }
+    // NOTE: 環境変数が定義されているかを確認
+    //       定義されていれば、開発環境とみなす（開発環境の設定しか行っていない）
+    if (process.env.DEV_HOST !== undefined) {
+      address = process.env.DEV_HOST + '/api/word'
+    } else {
+      address = 'https://english-card.herokuapp.com/api/word'
+    }
     // const protocol = process.env.HOST ? 'https://' : 'http://'
     // const baseURL = `${protocol}${process.env.HOST || 'localhost'}:${process.env.PORT || 3000}`
     // const address = baseURL + '/api/word'
