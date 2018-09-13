@@ -7,13 +7,22 @@ var mongoose = require('mongoose')
 
 // Create express instnace
 const app = express()
-const uri = 'mongodb://heroku_l087wd94:6ufch8odl4g1c7hi7fom13pdkq@ds141952.mlab.com:41952/heroku_l087wd94'
+
+let uri = ''
+if (process.env.NODE_ENV !== undefined ||
+    process.env.NODE_ENV === 'development') {
+  console.log('use local database');
+  uri = 'mongodb://127.0.0.1:27017/english-card'
+} else {
+  console.log('use production database');
+  uri = 'mongodb://heroku_l087wd94:6ufch8odl4g1c7hi7fom13pdkq@ds141952.mlab.com:41952/heroku_l087wd94'
+}
+
+console.log('**** data base uri :', uri);
 
 // Require API routes
 const users = require('./routes/users')
 const word = require('./routes/word');
-
-const port = process.env.PORT || 3000
 
 mongoose.Promise = require('bluebird');
 mongoose.connect(uri, { useMongoClient: true, promiseLibrary: require('bluebird') })

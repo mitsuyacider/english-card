@@ -18,7 +18,6 @@
 
 <script>
 import AppLogo from '~/components/AppLogo.vue'
-import data from 'assets/data/word.json'
 import NativeCommunicator from '~/plugins/NativeCommunicator.js'
 import { mapGetters } from 'vuex'
 import axios from 'axios'
@@ -39,17 +38,19 @@ export default {
     // NOTE: 環境変数が定義されているかを確認
     //       定義されていれば、開発環境とみなす（開発環境の設定しか行っていない）
     if (process.env.DEV_HOST !== undefined) {
+      console.log('index.vue >> localhost:', process.env.DEV_HOST)
       address = process.env.DEV_HOST + '/api/word'
     } else {
+      console.log('index.vue >> production')
       address = 'https://english-card.herokuapp.com/api/word'
     }
     axios.get(address)
-    .then(response => {
-      this.words = response.data
-    })
-    .catch(e => {
-      this.errors.push(e)
-    })
+      .then(response => {
+        this.words = response.data
+      })
+      .catch(e => {
+        this.errors.push(e)
+      })
   },
   watch: {
     getRecognitionWord: function (newVal, oldVal) {

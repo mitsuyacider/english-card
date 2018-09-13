@@ -1,7 +1,6 @@
 const environment = process.env.NODE_ENV || 'development';
 const envSet = require(`./env.${environment}.js`)
 module.exports = {
-
   env: envSet,
   plugins: [{src: '~/plugins/NativeCommunicator.js', ssr: false}],
   modules: [
