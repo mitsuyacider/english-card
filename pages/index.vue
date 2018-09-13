@@ -1,19 +1,25 @@
 <template>
-  <section class="container">
-    <div class="card" style="width: 18rem;">
-      <!-- <img class="card-img-top" src="..." alt="Card image cap"> -->
-      <div class="card-header">
-        <div class="upper">
-          <span>{{ getUpperSentence() }}</span>
+  <div class="main">
+    <section class="container">
+      <div class="card" style="width: 18rem;">
+        <!-- <img class="card-img-top" src="..." alt="Card image cap"> -->
+        <div class="card-header">
+          <div class="upper">
+            <span>{{ getUpperSentence() }}</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="bottom">
+            <span>{{ getBottomSentence() }}</span>
+          </div>
         </div>
       </div>
-      <div class="card-body">
-        <div class="bottom">
-          <span>{{ getBottomSentence() }}</span>
-        </div>
+
+      <div class="button-container">
+        <button type="button" class="btn btn-outline-secondary" v-on:click="onClickNextButton">Next</button>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 </template>
 
 <script>
@@ -88,7 +94,7 @@ export default {
         return 'loading...'
       }
     },
-    updateWord () {
+    updateWord: function () {
       this.index++
       if (this.index > this.words.length - 1) {
         this.index = 0
@@ -110,6 +116,9 @@ export default {
         this.$set(this.words, currentIndex, this.words[randomIndex])
         this.$set(this.words, randomIndex, temporaryValue)
       }
+    },
+    onClickNextButton () {
+      this.updateWord()
     }
   },
   mounted () {
@@ -142,5 +151,16 @@ export default {
   justify-content: center;
   align-items: center;
   text-align: center;
+}
+
+.button-container {
+  width: 100px;
+  height: 50px;
+  margin-left: 50px;
+
+  button {
+    width: 100%;
+    height: 100%;
+  }
 }
 </style>

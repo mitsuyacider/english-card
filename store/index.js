@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 const store = () => new Vuex.Store({
 
   state: {
-    recognitionWord: 'abscd'
+    recognitionWord: ''
   },
   mutations: {
     setRecognitionWord (state, str) {
