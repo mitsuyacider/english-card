@@ -20,22 +20,32 @@ if (process.env.NODE_ENV !== undefined ||
 
 console.log('**** data base uri :', uri);
 
-// Require API routes
-const users = require('./routes/users')
-const word = require('./routes/word');
-
 mongoose.Promise = require('bluebird');
 mongoose.connect(uri, { useMongoClient: true, promiseLibrary: require('bluebird') })
   .then(() =>  console.log('connection succesful'))
   .catch((err) => console.error(err));
 
-// Import API Routes
-app.use(users)
-app.use('/word', word);
-
-app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({'extended':'false'}));
+
+// Import API Routes
+// NOTE: !!!IMPORTANT!!!
+//       bodyparserの設定の後にルーターの設定を行う必要がある。
+//       そうでないとpostの際にrequestのbodyがundefinedになる。
+// Require API routes
+const users = require('./routes/users')
+const word = require('./routes/word');
+const search = require('./routes/search')
+
+app.use(users)
+app.use('/word', word);
+app.use('/search', search);
+
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 // Export the server middleware
 module.exports = {

@@ -4,7 +4,7 @@ module.exports = {
   env: envSet,
   plugins: [{src: '~/plugins/NativeCommunicator.js', ssr: false}],
   modules: [
-    ['bootstrap-vue/nuxt', { css: false }]
+    ['bootstrap-vue/nuxt', { css: false }, '@nuxtjs/proxy', '@/nuxtjs/axios']
   ],
   /*
   ** Headers of the page

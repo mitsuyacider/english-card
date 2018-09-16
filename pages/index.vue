@@ -53,6 +53,8 @@ export default {
     axios.get(address)
       .then(response => {
         this.words = response.data
+        // NOTE: データをシャッフルする
+        this.shuffle()
       })
       .catch(e => {
         this.errors.push(e)
@@ -73,7 +75,7 @@ export default {
   methods: {
     getUpperSentence: function () {
       if (this.words.length > 0) {
-        return this.words[this.index]['WordJP']
+        return this.words[this.index]['wordJp']
       } else {
         return 'loading...'
       }
@@ -81,15 +83,17 @@ export default {
     getBottomSentence: function () {
       if (this.words.length > 0) {
         // NOTE: recognition word をチェックして、単語と一致しているかどうかを調べる。
-        const word = this.words[this.index]['WordEN']
-        const hasWord = this.recognitionWord.toLowerCase().includes(word)
+        const word = this.words[this.index]['wordEn']
+        // const hasWord = this.recognitionWord.toLowerCase().includes(word)
+        //
+        // if (hasWord) {
+        //   this.updateWord()
+        //   return '正解！！'
+        // } else {
+        //   return this.recognitionWord
+        // }
 
-        if (hasWord) {
-          this.updateWord()
-          return '正解！！'
-        } else {
-          return this.recognitionWord
-        }
+        return word
       } else {
         return 'loading...'
       }
@@ -100,7 +104,7 @@ export default {
         this.index = 0
       }
     },
-    shuffle () {
+    shuffle: function () {
       let currentIndex = this.words.length
       let temporaryValue
       let randomIndex
@@ -122,9 +126,6 @@ export default {
     }
   },
   mounted () {
-    // NOTE: データをシャッフルする
-    this.shuffle()
-
     // FIXME: これが最適な方法ではないと思うが、pluginsにjsを入れると
     //        vueアプリケーションが作られる前に読み込まれるため、storeの
     //        情報を初期状態で保つことができない。そのため、storeの情報をセットする必要がある。
