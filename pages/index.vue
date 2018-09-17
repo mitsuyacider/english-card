@@ -9,18 +9,19 @@
           </div>
         </div>
         <div class="card-body">
-          <div class="bottom word">
+          <div class="bottom-word">
             <span>{{ getBottomSentence() }}</span>
           </div>
-          <div class="bottom recognition">
-            <span>{{ getBottomSentence() }}</span>
-          </div>
+        </div>
+        <div class="card-footer bg-dark text-white" v-if="this.isRecognizing">
+          音声認識中
         </div>
       </div>
 
       <div class="button-container">
         <button type="button" class="btn btn-outline-secondary" v-on:click="onClickNextButton">Next</button>
         <button type="button" class="btn btn-outline-secondary" v-on:click="onClickRecognitionButton">発声</button>
+        <button type="button" class="btn btn-outline-secondary" v-on:click="onClickShowTextButton">答え</button>
       </div>
     </section>
   </div>
@@ -41,7 +42,8 @@ export default {
       index: 0,
       words: [],
       recognitionWord: this.$store.state.recognitionWord,
-      recognition: ''
+      recognition: '',
+      isRecognizing: false
     }
   },
   created () {
@@ -130,7 +132,16 @@ export default {
       this.updateWord()
     },
     onClickRecognitionButton () {
-      this.startRecognition()
+      this.isRecognizing = !this.isRecognizing
+
+      if (this.isRecognizing) {
+        this.startRecognition()
+      } else {
+        this.stopRecognition()
+      }
+    },
+    onClickShowTextButton () {
+
     },
     startRecognition () {
       console.log('***** start recoginition *****');
@@ -141,6 +152,9 @@ export default {
         console.log('is smart phone site');
         NativeCommunicator.startRecognition()
       }
+    },
+    stopRecognition () {
+      this.recognition.stop()
     },
     isWebBrowser() {
       const ua = navigator.userAgent;
@@ -185,7 +199,11 @@ export default {
 }
 
 .card-body {
-  height: 30vh;
+  width: 100%;
+  height: 20vh;
+
+  .bottom-word {
+  }
 }
 
 .card-header, .card-body {
