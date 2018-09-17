@@ -9,7 +9,10 @@
           </div>
         </div>
         <div class="card-body">
-          <div class="bottom">
+          <div class="bottom word">
+            <span>{{ getBottomSentence() }}</span>
+          </div>
+          <div class="bottom recognition">
             <span>{{ getBottomSentence() }}</span>
           </div>
         </div>
@@ -17,6 +20,7 @@
 
       <div class="button-container">
         <button type="button" class="btn btn-outline-secondary" v-on:click="onClickNextButton">Next</button>
+        <button type="button" class="btn btn-outline-secondary" v-on:click="onClickRecognitionButton">発声</button>
       </div>
     </section>
   </div>
@@ -36,7 +40,8 @@ export default {
     return {
       index: 0,
       words: [],
-      recognitionWord: this.$store.state.recognitionWord
+      recognitionWord: this.$store.state.recognitionWord,
+      recognition: ''
     }
   },
   created () {
@@ -123,23 +128,67 @@ export default {
     },
     onClickNextButton () {
       this.updateWord()
+    },
+    onClickRecognitionButton () {
+      this.startRecognition()
+    },
+    startRecognition () {
+      console.log('***** start recoginition *****');
+      // NOTE: スマートフォンとwebブラウザで音声認識の処理を変える
+      if (this.isWebBrowser()) {
+        this.recognition.start()
+      } else {
+        console.log('is smart phone site');
+        NativeCommunicator.startRecognition()
+      }
+    },
+    isWebBrowser() {
+      const ua = navigator.userAgent;
+      const iphone = ua.indexOf('iPhone') > 0;
+      const androidSp = ua.indexOf('Android') > 0 && ua.indexOf('Mobile') > 0;
+      const ipad = ua.indexOf('iPad');
+      const androidT = ua.indexOf('Android');
+
+      return !(iphone && ipad && androidT && androidSp)
     }
   },
   mounted () {
-    // FIXME: これが最適な方法ではないと思うが、pluginsにjsを入れると
-    //        vueアプリケーションが作られる前に読み込まれるため、storeの
-    //        情報を初期状態で保つことができない。そのため、storeの情報をセットする必要がある。
-    NativeCommunicator.setStore(this.$store)
-    NativeCommunicator.helloNative('hello')
-    NativeCommunicator.startRecognition()
+    if (this.isWebBrowser()) {
+      // NOTE: ウェブサイトの場合はgoogleのspeech recognitionを使う
+      this.recognition = new window.webkitSpeechRecognition
+      this.recognition.interimResults = true;
+      this.recognition.continuous = true;
+      this.recognition.onstart = () => {
+        console.log('音声入力中...')
+      }
+      this.recognition.onend = () => {
+        console.log('音声入力終了')
+      }
+      this.recognition.onresult = (event) => {
+        if (event.results.length > 0) {
+          console.log(event.results[0][0].transcript)
+        }
+      }
+    } else {
+      // FIXME: これが最適な方法ではないと思うが、pluginsにjsを入れると
+      // vueアプリケーションが作られる前に読み込まれるため、storeの
+      // 情報を初期状態で保つことができない。そのため、storeの情報をセットする必要がある。
+      NativeCommunicator.setStore(this.$store)
+    }
   }
 }
 </script>
 
 <style lang="scss">
-.card-header, .card-body {
-  height: 30vh;
+.card-header {
+  height: 20vh;
+}
 
+.card-body {
+  height: 30vh;
+}
+
+.card-header, .card-body {
   // 上下中心に設定
   display: flex;
   justify-content: center;
@@ -158,8 +207,8 @@ export default {
   width: 100px;
   height: 50px;
   margin-left: 50px;
-
   button {
+    margin-bottom: 10px;
     width: 100%;
     height: 100%;
   }
