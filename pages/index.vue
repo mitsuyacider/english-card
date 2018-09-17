@@ -91,16 +91,19 @@ export default {
       if (this.words.length > 0) {
         // NOTE: recognition word をチェックして、単語と一致しているかどうかを調べる。
         const word = this.words[this.index]['wordEn']
-        // const hasWord = this.recognitionWord.toLowerCase().includes(word)
-        //
-        // if (hasWord) {
-        //   this.updateWord()
-        //   return '正解！！'
-        // } else {
-        //   return this.recognitionWord
-        // }
 
-        return word
+        if (this.isRecognizing) {
+          const hasWord = this.recognitionWord.toLowerCase().includes(word)
+
+          if (hasWord) {
+            this.updateWord()
+            return '正解！！'
+          } else {
+            return this.recognitionWord
+          }
+        } else {
+          return word
+        }
       } else {
         return 'loading...'
       }
@@ -129,12 +132,14 @@ export default {
       }
     },
     onClickNextButton () {
+      this.recognitionWord = ''
       this.updateWord()
     },
     onClickRecognitionButton () {
       this.isRecognizing = !this.isRecognizing
 
       if (this.isRecognizing) {
+        this.clearRecognitionWord()
         this.startRecognition()
       } else {
         this.stopRecognition()
@@ -142,6 +147,9 @@ export default {
     },
     onClickShowTextButton () {
 
+    },
+    clearRecognitionWord () {
+      this.recognitionWord = ''
     },
     startRecognition () {
       console.log('***** start recoginition *****');
@@ -170,16 +178,20 @@ export default {
     if (this.isWebBrowser()) {
       // NOTE: ウェブサイトの場合はgoogleのspeech recognitionを使う
       this.recognition = new window.webkitSpeechRecognition
-      this.recognition.interimResults = true;
+      this.recognition.interimResults = false;
       this.recognition.continuous = true;
       this.recognition.onstart = () => {
-        console.log('音声入力中...')
+        console.log('音声入力開始...')
       }
       this.recognition.onend = () => {
         console.log('音声入力終了')
+        if (this.isRecognizing) {
+          this.startRecognition()
+        }
       }
       this.recognition.onresult = (event) => {
         if (event.results.length > 0) {
+          this.recognitionWord += event.results[0][0].transcript
           console.log(event.results[0][0].transcript)
         }
       }
