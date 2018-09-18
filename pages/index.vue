@@ -14,7 +14,8 @@
           </div>
         </div>
         <div class="card-footer bg-dark text-white" v-if="this.isRecognizing">
-          音声認識中
+          <p>音声認識中</p>
+          <span v-if="this.shouldShowAnswer">{{ getAnswer() }}</span>
         </div>
       </div>
 
@@ -43,7 +44,8 @@ export default {
       words: [],
       recognitionWord: this.$store.state.recognitionWord,
       recognition: '',
-      isRecognizing: false
+      isRecognizing: false,
+      shouldShowAnswer: false
     }
   },
   created () {
@@ -146,7 +148,7 @@ export default {
       }
     },
     onClickShowTextButton () {
-
+      this.shouldShowAnswer = !this.shouldShowAnswer
     },
     clearRecognitionWord () {
       this.recognitionWord = ''
@@ -172,6 +174,9 @@ export default {
       const androidT = ua.indexOf('Android');
 
       return !(iphone && ipad && androidT && androidSp)
+    },
+    getAnswer () {
+      return this.words[this.index]['wordEn']
     }
   },
   mounted () {
@@ -180,6 +185,9 @@ export default {
       this.recognition = new window.webkitSpeechRecognition
       this.recognition.interimResults = false;
       this.recognition.continuous = true;
+      // NOTE: Set language
+      //       https://cloud.google.com/speech-to-text/docs/languages
+      this.recognition.lang = 'en-GB'
       this.recognition.onstart = () => {
         console.log('音声入力開始...')
       }
