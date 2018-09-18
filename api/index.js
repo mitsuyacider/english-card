@@ -9,7 +9,7 @@ var mongoose = require('mongoose')
 const app = express()
 
 let uri = ''
-if (process.env.NODE_ENV !== undefined ||
+if (process.env.DEV_HOST !== undefined ||
     process.env.NODE_ENV === 'development') {
   console.log('use local database');
   uri = 'mongodb://127.0.0.1:27017/english-card'
