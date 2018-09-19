@@ -5,7 +5,6 @@ var Word = require('../models/Word.js');
 
 /* GET ALL Words */
 router.get('/', function(req, res, next) {
-  console.log("**** get:" + req.body);
   Word.find(function (err, products) {
     if (err) return next(err);
     res.json(products);
@@ -22,8 +21,6 @@ router.get('/:id', function(req, res, next) {
 
 /* SAVE Word */
 router.post('/add', function(req, res, next) {
-  // req.setHeader('Content-Type', 'text/plain');
-  console.log("**** post:" + req.body);
   Word.create(req.body, function (err, post) {
     if (err) return next(err);
     res.json(post);

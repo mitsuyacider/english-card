@@ -77,7 +77,8 @@ export default {
           'Content-Type': 'application/json'
         }
       }
-      axios.post('http://localhost:3000/api/word/add', word, config)
+
+      axios.post('/api/word/add', word, config)
         .then((response) => {
           this.clearWords()
         })
