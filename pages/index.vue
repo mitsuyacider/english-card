@@ -10,7 +10,8 @@
         </div>
         <div class="card-body">
           <div class="bottom-word">
-            <span>{{ getBottomSentence() }}</span>
+            <!-- <span>{{ getBottomSentence() }}</span> -->
+            <input autofocus @blur="changeFocus" @focus.native="myFunction" ref="enWord" v-model="inputEnVal" class="form-control">
           </div>
         </div>
         <div class="card-footer bg-dark text-white" v-if="this.isRecognizing">
@@ -45,23 +46,28 @@ export default {
       recognitionWord: this.$store.state.recognitionWord,
       recognition: '',
       isRecognizing: false,
-      shouldShowAnswer: false
+      shouldShowAnswer: false,
+      inputEnVal: ''
     }
   },
   created () {
-    axios.get('/api/word')
+    const url = process.env.HOST + '/api/word'
+    axios.get(url)
       .then(response => {
         this.words = response.data
         // NOTE: データをシャッフルする
         this.shuffle()
       })
       .catch(e => {
-        this.errors.push(e)
+        console.log(e);
       })
   },
   watch: {
     getRecognitionWord: function (newVal, oldVal) {
       this.recognitionWord = newVal
+    },
+    inputEnVal: function (newVal, oldVal) {
+      this.checkWord()
     }
   },
   computed: {
@@ -123,6 +129,22 @@ export default {
         this.$set(this.words, randomIndex, temporaryValue)
       }
     },
+    changeFocus () {
+      console.log('changeFocus');
+      this.$refs.enWord.focus()
+    },
+    myFunction () {
+      console.log('focus');
+    },
+    checkWord () {
+      const word = this.words[this.index]['wordEn']
+      const hasWord = this.inputEnVal.toLowerCase().includes(word)
+      if (hasWord) {
+        this.updateWord()
+        this.inputEnVal = ''
+      } else {
+      }
+    },
     onClickNextButton () {
       this.recognitionWord = ''
       this.updateWord()
@@ -144,14 +166,14 @@ export default {
       this.recognitionWord = ''
     },
     startRecognition () {
-      console.log('***** start recoginition *****');
-      // NOTE: スマートフォンとwebブラウザで音声認識の処理を変える
-      if (this.isWebBrowser()) {
-        this.recognition.start()
-      } else {
-        console.log('is smart phone site');
-        NativeCommunicator.startRecognition()
-      }
+      // console.log('***** start recoginition *****');
+      // // NOTE: スマートフォンとwebブラウザで音声認識の処理を変える
+      // if (this.isWebBrowser()) {
+      //   this.recognition.start()
+      // } else {
+      //   console.log('is smart phone site');
+      //   NativeCommunicator.startRecognition()
+      // }
     },
     stopRecognition () {
       this.recognition.stop()
