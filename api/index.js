@@ -38,11 +38,12 @@ app.use(bodyParser.urlencoded({'extended':'false'}));
 const users = require('./routes/users')
 const word = require('./routes/word');
 const search = require('./routes/search')
+const sentences = require('./routes/sentences')
 
 app.use(users)
 app.use('/word', word);
 app.use('/search', search);
-
+app.use('/sentences', sentences);
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");

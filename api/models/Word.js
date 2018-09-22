@@ -5,4 +5,4 @@ var enjpWordSchema = new mongoose.Schema({
   wordJp: String,
 });
 
-module.exports = mongoose.model('enjpWord', enjpWordSchema);
+module.exports = mongoose.model('enjpWords', enjpWordSchema);
