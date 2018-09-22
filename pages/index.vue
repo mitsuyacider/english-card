@@ -1,24 +1,8 @@
 <template>
   <div class="main" v-on:keyup.enter="onKeyUpEnter">
     <section class="container">
-      <div class="card" style="width: 18rem;">
-        <!-- <img class="card-img-top" src="..." alt="Card image cap"> -->
-        <div class="card-header">
-          <div class="upper">
-            <span>{{ getUpperSentence() }}</span>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="bottom-word">
-            <!-- <span>{{ getBottomSentence() }}</span> -->
-            <input autofocus @blur="changeFocus" @focus.native="myFunction" ref="enWord" v-model="inputEnVal" class="form-control">
-          </div>
-        </div>
-        <div class="card-footer bg-dark text-white" v-if="this.isRecognizing || this.shouldShowAnswer">
-          <p v-if="this.isRecognizing">音声認識中</p>
-          <span v-if="this.shouldShowAnswer">{{ getAnswer() }}</span>
-        </div>
-      </div>
+
+      <word-card :dataSet="this.words[this.index]" v-on:update="updateAnswerData" />
 
       <div class="button-container">
         <button type="button" class="btn btn-outline-secondary" v-on:click="onClickNextButton">Next</button>
@@ -30,14 +14,14 @@
 </template>
 
 <script>
-import AppLogo from '~/components/AppLogo.vue'
+import WordCard from '~/components/WordCard.vue'
 import NativeCommunicator from '~/plugins/NativeCommunicator.js'
 import { mapGetters } from 'vuex'
 import axios from 'axios'
 
 export default {
   components: {
-    AppLogo
+    WordCard
   },
   data () {
     return {
@@ -46,8 +30,7 @@ export default {
       recognitionWord: this.$store.state.recognitionWord,
       recognition: '',
       isRecognizing: false,
-      shouldShowAnswer: false,
-      inputEnVal: ''
+      shouldShowAnswer: false
     }
   },
   created () {
@@ -65,9 +48,6 @@ export default {
   watch: {
     getRecognitionWord: function (newVal, oldVal) {
       this.recognitionWord = newVal
-    },
-    inputEnVal: function (newVal, oldVal) {
-      this.checkWord()
     }
   },
   computed: {
@@ -78,39 +58,14 @@ export default {
     ])
   },
   methods: {
-    getUpperSentence: function () {
-      if (this.words.length > 0) {
-        return this.words[this.index]['wordJp']
-      } else {
-        return 'loading...'
-      }
-    },
-    getBottomSentence: function () {
-      if (this.words.length > 0) {
-        // NOTE: recognition word をチェックして、単語と一致しているかどうかを調べる。
-        const word = this.words[this.index]['wordEn']
-
-        if (this.isRecognizing) {
-          const hasWord = this.recognitionWord.toLowerCase().includes(word)
-
-          if (hasWord) {
-            this.updateWord()
-            return '正解！！'
-          } else {
-            return this.recognitionWord
-          }
-        } else {
-          return word
-        }
-      } else {
-        return 'loading...'
-      }
-    },
     updateWord: function () {
       this.index++
       if (this.index > this.words.length - 1) {
         this.index = 0
       }
+    },
+    updateAnswerData (val) {
+      this.checkWord(val)
     },
     shuffle: function () {
       let currentIndex = this.words.length
@@ -129,18 +84,12 @@ export default {
         this.$set(this.words, randomIndex, temporaryValue)
       }
     },
-    changeFocus () {
-      this.$refs.enWord.focus()
-    },
-    myFunction () {
-      console.log('focus');
-    },
-    checkWord () {
+    checkWord (val) {
       const word = this.words[this.index]['wordEn']
-      const hasWord = this.inputEnVal.toLowerCase().includes(word)
+      const hasWord = val.toLowerCase().includes(word)
       if (hasWord) {
+        console.log('has word');
         this.updateWord()
-        this.inputEnVal = ''
       } else {
       }
     },
@@ -165,7 +114,6 @@ export default {
       this.recognitionWord = ''
     },
     startRecognition () {
-      // console.log('***** start recoginition *****');
       // NOTE: スマートフォンとwebブラウザで音声認識の処理を変える
       if (this.isWebBrowser()) {
         this.recognition.start()
