@@ -4,6 +4,7 @@ const express = require('express')
 var logger = require('morgan')
 var bodyParser = require('body-parser')
 var mongoose = require('mongoose')
+var cors = require('cors')
 
 // Create express instnace
 const app = express()
@@ -40,7 +41,7 @@ const search = require('./routes/search')
 app.use(users)
 app.use('/word', word);
 app.use('/search', search);
-
+app.use(cors)
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");

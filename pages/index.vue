@@ -1,5 +1,5 @@
 <template>
-  <div class="main">
+  <div class="main" v-on:keyup.enter="onKeyUpEnter">
     <section class="container">
       <div class="card" style="width: 18rem;">
         <!-- <img class="card-img-top" src="..." alt="Card image cap"> -->
@@ -14,8 +14,8 @@
             <input autofocus @blur="changeFocus" @focus.native="myFunction" ref="enWord" v-model="inputEnVal" class="form-control">
           </div>
         </div>
-        <div class="card-footer bg-dark text-white" v-if="this.isRecognizing">
-          <p>音声認識中</p>
+        <div class="card-footer bg-dark text-white" v-if="this.isRecognizing || this.shouldShowAnswer">
+          <p v-if="this.isRecognizing">音声認識中</p>
           <span v-if="this.shouldShowAnswer">{{ getAnswer() }}</span>
         </div>
       </div>
@@ -130,7 +130,6 @@ export default {
       }
     },
     changeFocus () {
-      console.log('changeFocus');
       this.$refs.enWord.focus()
     },
     myFunction () {
@@ -167,13 +166,13 @@ export default {
     },
     startRecognition () {
       // console.log('***** start recoginition *****');
-      // // NOTE: スマートフォンとwebブラウザで音声認識の処理を変える
-      // if (this.isWebBrowser()) {
-      //   this.recognition.start()
-      // } else {
-      //   console.log('is smart phone site');
-      //   NativeCommunicator.startRecognition()
-      // }
+      // NOTE: スマートフォンとwebブラウザで音声認識の処理を変える
+      if (this.isWebBrowser()) {
+        this.recognition.start()
+      } else {
+        console.log('is smart phone site');
+        NativeCommunicator.startRecognition()
+      }
     },
     stopRecognition () {
       this.recognition.stop()
@@ -189,6 +188,16 @@ export default {
     },
     getAnswer () {
       return this.words[this.index]['wordEn']
+    },
+    onKeyUpEnter () {
+      const word = this.words[this.index]['wordEn']
+      var msg = new SpeechSynthesisUtterance()
+      msg.volume = 0.5
+      msg.rate = 1
+      msg.pitch = 1
+      msg.text = word
+      msg.lang = 'en-GB'
+      window.speechSynthesis.speak(msg)
     }
   },
   mounted () {
