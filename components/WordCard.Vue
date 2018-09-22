@@ -24,13 +24,13 @@
 <script>
 export default {
   props: {
-    dataSet: Object
+    dataSet: Object,
+    shouldShowAnswer: Boolean,
+    isRecognizing: Boolean
   },
   data () {
     return {
-      inputEnVal: '',
-      shouldShowAnswer: false,
-      isRecognizing: false
+      inputEnVal: ''
     }
   },
   watch: {
@@ -69,13 +69,11 @@ export default {
       }
     },
     getAnswer () {
-      return 'loading...'
-
-      // if (this.words.length > 0) {
-      //   return this.words[this.index]['wordEn']
-      // } else {
-      //   return ''
-      // }
+      if (this.dataSet !== undefined && Object.keys(this.dataSet).length !== 0) {
+        return this.dataSet['wordEn']
+      } else {
+        return ''
+      }
     },
     getUpperSentence: function () {
       if (this.dataSet !== undefined && Object.keys(this.dataSet).length !== 0) {

@@ -2,7 +2,7 @@
   <div class="main" v-on:keyup.enter="onKeyUpEnter">
     <section class="container">
 
-      <word-card :dataSet="this.words[this.index]" v-on:update="updateAnswerData" />
+      <word-card :dataSet="this.words[this.index]" :isRecognizing="this.isRecognizing" :shouldShowAnswer="this.shouldShowAnswer" v-on:update="updateAnswerData" />
 
       <div class="button-container">
         <button type="button" class="btn btn-outline-secondary" v-on:click="onClickNextButton">Next</button>
