@@ -8,6 +8,14 @@
         <button type="button" class="btn btn-outline-secondary" v-on:click="onClickNextButton">Next</button>
         <button type="button" class="btn btn-outline-secondary" v-on:click="onClickRecognitionButton">発声</button>
         <button type="button" class="btn btn-outline-secondary" v-on:click="onClickShowTextButton">答え</button>
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+          <label class="btn btn-secondary" :class="{active: cardType=='word'}">
+            <input type="radio" name="options" id="option1" v-model="cardType" value="word"> 英単語
+          </label>
+          <label class="btn btn-secondary" :class="{active: cardType=='sentence'}">
+            <input type="radio" name="options" id="option2" v-model="cardType" value="sentence"> センテンス
+          </label>
+        </div>
       </div>
     </section>
   </div>
@@ -30,7 +38,8 @@ export default {
       recognitionWord: this.$store.state.recognitionWord,
       recognition: '',
       isRecognizing: false,
-      shouldShowAnswer: false
+      shouldShowAnswer: false,
+      cardType: 'word'
     }
   },
   created () {
