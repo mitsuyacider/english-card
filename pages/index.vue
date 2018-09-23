@@ -10,7 +10,8 @@
         <button type="button" class="btn btn-outline-secondary" v-on:click="onClickShowTextButton">答え</button>
         <div class="btn-group btn-group-toggle" data-toggle="buttons">
           <label class="btn btn-secondary" :class="{active: cardType=='word'}">
-            <input type="radio" name="options" v-model="cardType" value="word"> 英単語
+            <input type="radio" name="options"
+            v-model="cardType" value="word" @input="changeCardType"> 英単語
           </label>
           <label class="btn btn-secondary" :class="{active: cardType=='sentences'}">
             <input type="radio" name="options"
