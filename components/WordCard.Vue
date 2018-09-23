@@ -63,21 +63,20 @@ export default {
       }
     },
     changeFocus () {
-      console.log('change focus');
       if (this.$refs.enWord != undefined) {
         this.$refs.enWord.focus()
       }
     },
     getAnswer () {
       if (this.dataSet !== undefined && Object.keys(this.dataSet).length !== 0) {
-        return this.dataSet['wordEn']
+        return this.dataSet.en
       } else {
         return ''
       }
     },
     getUpperSentence: function () {
       if (this.dataSet !== undefined && Object.keys(this.dataSet).length !== 0) {
-        return this.dataSet['wordJp']
+        return this.dataSet.jp
       } else {
         return 'loading...'
       }

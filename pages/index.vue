@@ -2,7 +2,7 @@
   <div class="main" v-on:keyup.enter="onKeyUpEnter">
     <section class="container">
 
-      <word-card :dataSet="this.words[this.index]" :isRecognizing="this.isRecognizing" :shouldShowAnswer="this.shouldShowAnswer" v-on:update="updateAnswerData" />
+      <word-card :dataSet="getCurrentDataSet()" :isRecognizing="this.isRecognizing" :shouldShowAnswer="this.shouldShowAnswer" v-on:update="updateAnswerData" />
 
       <div class="button-container">
         <button type="button" class="btn btn-outline-secondary" v-on:click="onClickNextButton">Next</button>
@@ -10,10 +10,11 @@
         <button type="button" class="btn btn-outline-secondary" v-on:click="onClickShowTextButton">答え</button>
         <div class="btn-group btn-group-toggle" data-toggle="buttons">
           <label class="btn btn-secondary" :class="{active: cardType=='word'}">
-            <input type="radio" name="options" id="option1" v-model="cardType" value="word"> 英単語
+            <input type="radio" name="options" v-model="cardType" value="word"> 英単語
           </label>
-          <label class="btn btn-secondary" :class="{active: cardType=='sentence'}">
-            <input type="radio" name="options" id="option2" v-model="cardType" value="sentence"> センテンス
+          <label class="btn btn-secondary" :class="{active: cardType=='sentences'}">
+            <input type="radio" name="options"
+             v-model="cardType" value="sentences" @input="changeCardType"> センテンス
           </label>
         </div>
       </div>
@@ -36,6 +37,11 @@ export default {
       index: 0,
       words: [],
       recognitionWord: this.$store.state.recognitionWord,
+      gameInfo: {
+        isRecognizing: false,
+        cardType: '',
+        shouldShowAnswer: false
+      },
       recognition: '',
       isRecognizing: false,
       shouldShowAnswer: false,
@@ -43,16 +49,7 @@ export default {
     }
   },
   created () {
-    const url = process.env.HOST + '/api/word'
-    axios.get(url)
-      .then(response => {
-        this.words = response.data
-        // NOTE: データをシャッフルする
-        this.shuffle()
-      })
-      .catch(e => {
-        console.log(e);
-      })
+    this.getCardData('word')
   },
   watch: {
     getRecognitionWord: function (newVal, oldVal) {
@@ -67,6 +64,12 @@ export default {
     ])
   },
   methods: {
+    changeCardType: function (e) {
+      // NOTE: 設定データを初期化
+      this.index = 0
+      const type = e.target.value
+      this.getCardData(type)
+    },
     updateWord: function () {
       this.index++
       if (this.index > this.words.length - 1) {
@@ -94,13 +97,26 @@ export default {
       }
     },
     checkWord (val) {
-      const word = this.words[this.index]['wordEn']
+      const word = this.getCurrentDataSet().en.toLowerCase()
       const hasWord = val.toLowerCase().includes(word)
+
       if (hasWord) {
-        console.log('has word');
         this.updateWord()
       } else {
       }
+    },
+    getCardData (cardType) {
+      const url = process.env.HOST + '/api/' + cardType
+      axios.get(url)
+        .then(response => {
+          this.words = response.data
+          // NOTE: データをシャッフルする
+          this.shuffle()
+        })
+        .catch(e => {
+          console.log(e);
+        })
+
     },
     onClickNextButton () {
       this.recognitionWord = ''
@@ -147,7 +163,7 @@ export default {
       return this.words[this.index]['wordEn']
     },
     onKeyUpEnter () {
-      const word = this.words[this.index]['wordEn']
+      const word = this.getCurrentDataSet().en
       var msg = new SpeechSynthesisUtterance()
       msg.volume = 0.5
       msg.rate = 1
@@ -155,6 +171,19 @@ export default {
       msg.text = word
       msg.lang = 'en-GB'
       window.speechSynthesis.speak(msg)
+    },
+    getCurrentDataSet () {
+      if (this.words.length === 0) return
+
+      let cardData = {}
+      if (this.cardType === 'word') {
+        cardData.en = this.words[this.index]['wordEn']
+        cardData.jp = this.words[this.index]['wordJp']
+      } else {
+        cardData.en = this.words[this.index]['sentenceEn']
+        cardData.jp = this.words[this.index]['sentenceJp']
+      }
+      return cardData
     }
   },
   mounted () {
